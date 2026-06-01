@@ -1,11 +1,11 @@
 function inicializarSala(): number[][] {
     let sala: number[][] = [];
 
-    for(var fila=0; fila<8; fila++){
+    for(let fila=0; fila<8; fila++){
 
         let nuevaFila: number[] = [];
 
-        for (var columna=0; columna<10; columna++){
+        for (let columna=0; columna<10; columna++){
 
             nuevaFila.push(0);
         }
@@ -20,10 +20,10 @@ function mostrarSala(sala: number[][]) {
     console.log("    0 1 2 3 4 5 6 7 8 9");
     console.log("-----------------------");
 
-    for (var fila = 0; fila < 8; fila++) {
-        var textoFila = fila + ":  "; 
+    for (let fila = 0; fila < 8; fila++) {
+        let textoFila = fila + ":  "; 
 
-        for (var columna = 0; columna < 10; columna++) {
+        for (let columna = 0; columna < 10; columna++) {
             // Si el asiento es 1 está ocupado (X), si es 0 está libre (L)
             if (sala[fila][columna] === 1) {
                 textoFila = textoFila + "X ";
@@ -52,11 +52,11 @@ function reservarAsiento(sala: number[][], fila: number, columna: number) {
 
 
 function contarAsientos(sala: number[][]): string {
-    var ocupados = 0;
-    var libres = 0;
+    let ocupados = 0;
+    let libres = 0;
 
-    for (var fila = 0; fila < 8; fila++) {
-        for (var columna = 0; columna < 10; columna++) {
+    for (let fila = 0; fila < 8; fila++) {
+        for (let columna = 0; columna < 10; columna++) {
             if (sala[fila][columna] === 1) {
                 ocupados = ocupados + 1;
             } else {
@@ -70,8 +70,8 @@ function contarAsientos(sala: number[][]): string {
 
 
 function buscarContiguos(sala: number[][]) {
-    for (var fila = 0; fila < 8; fila++) {
-        for (var columna = 0; columna < 9; columna++) {
+    for (let fila = 0; fila < 8; fila++) {
+        for (let columna = 0; columna < 9; columna++) {
             // Si el asiento actual es 0 Y el de la derecha también es 0
             if (sala[fila][columna] === 0 && sala[fila][columna + 1] === 0) {
                 return "Hallado en la Fila " + fila + ": Asientos " + columna + " y " + (columna + 1);
@@ -92,7 +92,7 @@ console.log("==================================================\n");
 
 
 console.log("--- ESCENARIO A: SALA NUEVA Y VACÍA ---");
-var salaCine = inicializarSala(); 
+let salaCine = inicializarSala(); 
 mostrarSala(salaCine);           
 
 // Mostramos el conteo inicial y buscamos los primeros asientos juntos
@@ -125,10 +125,10 @@ console.log("\n--------------------------------------------------\n");
 console.log("--- ESCENARIO C: SALA CASI LLENA (ASIENTOS SUELTOS) ---");
 
 
-var salaCasiLlena = inicializarSala();
+let salaCasiLlena = inicializarSala();
 
-for (var f = 0; f < 8; f++) {
-    for (var c = 0; c < 10; c++) {
+for (let f = 0; f < 8; f++) {
+    for (let c = 0; c < 10; c++) {
         // Si la columna es par, reservamos el asiento. Si es impar, queda libre (0)
         if (c % 2 === 0) {
             reservarAsiento(salaCasiLlena, f, c);
@@ -145,10 +145,10 @@ console.log("\n--------------------------------------------------\n");
 
 console.log("--- ESCENARIO D: SALA COMPLETAMENTE LLENA ---");
 
-var salaLlena = inicializarSala();
+let salaLlena = inicializarSala();
 
-for (var f = 0; f < 8; f++) {
-    for (var c = 0; c < 10; c++) {
+for (let f = 0; f < 8; f++) {
+    for (let c = 0; c < 10; c++) {
         reservarAsiento(salaLlena, f, c);
     }
 }

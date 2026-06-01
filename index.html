@@ -112,9 +112,9 @@
 
         function inicializarSala() {
             let sala = [];
-            for (var fila = 0; fila < 8; fila++) {
+            for (let fila = 0; fila < 8; fila++) {
                 let nuevaFila = [];
-                for (var columna = 0; columna < 10; columna++) {
+                for (let columna = 0; columna < 10; columna++) {
                     nuevaFila.push(0);
                 }
                 sala.push(nuevaFila);
@@ -135,10 +135,10 @@
         }
 
         function contarAsientos(sala) {
-            var ocupados = 0;
-            var libres = 0;
-            for (var fila = 0; fila < 8; fila++) {
-                for (var columna = 0; columna < 10; columna++) {
+            let ocupados = 0;
+            let libres = 0;
+            for (let fila = 0; fila < 8; fila++) {
+                for (let columna = 0; columna < 10; columna++) {
                     if (sala[fila][columna] === 1) {
                         ocupados = ocupados + 1;
                     } else {
@@ -150,8 +150,8 @@
         }
 
         function buscarContiguos(sala) {
-            for (var fila = 0; fila < 8; fila++) {
-                for (var columna = 0; columna < 9; columna++) {
+            for (let fila = 0; fila < 8; fila++) {
+                for (let columna = 0; columna < 9; columna++) {
                     if (sala[fila][columna] === 0 && sala[fila][columna + 1] === 0) {
                         return "Hallado en la Fila " + fila + ": Asientos " + columna + " y " + (columna + 1);
                     }
