@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Reservas - Cinema</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-900 to-slate-800 min-h-screen p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- HEADER -->
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-bold text-white mb-2">
+                🎬 Gestor de Reservas - Cinema
+            </h1>
+            <p class="text-gray-300 text-lg">Administrador de Sala de Cine | 8 Filas × 10 Columnas</p>
+        </div>
+
+        <!-- PANEL DE ALERTAS -->
+        <div id="alertPanel" class="fixed top-4 right-4 z-50 p-4 rounded-lg bg-slate-700 border-l-4 border-blue-500 shadow-2xl max-w-sm hidden">
+            <p id="alertMessage" class="text-white font-semibold"></p>
+        </div>
+
+        <!-- CONTENEDOR PRINCIPAL -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            
+            <!-- SECCIÓN DE ASIENTOS (LADO IZQUIERDO) -->
+            <div class="lg:col-span-3">
+                <div class="bg-slate-800 rounded-lg shadow-2xl p-8 border border-slate-700">
+                    <h2 class="text-2xl font-bold text-white mb-6 text-center">
+                        Mapa de Asientos
+                    </h2>
+
+                    <!-- LEYENDA -->
+                    <div class="flex justify-center gap-8 mb-8">
+                        <div class="flex items-center gap-2">
+                            <button class="w-8 h-8 rounded bg-green-500 text-white font-bold text-xs hover:bg-green-600">L</button>
+                            <span class="text-gray-300 text-sm">Disponible</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="w-8 h-8 rounded bg-red-500 text-white font-bold text-xs cursor-not-allowed">X</button>
+                            <span class="text-gray-300 text-sm">Ocupado</span>
+                        </div>
+                    </div>
+
+                    <!-- CUADRÍCULA DE ASIENTOS -->
+                    <div class="overflow-x-auto">
+                        <div class="inline-block">
+                            <!-- ENCABEZADO DE COLUMNAS -->
+                            <div class="flex mb-4">
+                                <div class="w-12"></div>
+                                <div class="flex gap-2">
+                                    <span id="headerCol" class="flex gap-2"></span>
+                                </div>
+                            </div>
+
+                            <!-- FILAS DE ASIENTOS -->
+                            <div id="seatGrid" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL DE ESTADÍSTICAS (LADO DERECHO) -->
+            <div class="lg:col-span-1">
+                <div class="bg-slate-800 rounded-lg shadow-2xl p-6 border border-slate-700 sticky top-8">
+                    <h2 class="text-2xl font-bold text-white mb-6 text-center">
+                        📊 Estadísticas
+                    </h2>
+
+                    <!-- CONTADOR DE ASIENTOS -->
+                    <div class="mb-8 p-4 bg-slate-700 rounded-lg">
+                        <p class="text-gray-300 text-sm mb-2">Estado Actual:</p>
+                        <p id="estadisticas" class="text-white font-bold text-sm leading-relaxed">
+                            Asientos ocupados: 0 | Asientos disponibles: 80
+                        </p>
+                    </div>
+
+                    <!-- BOTÓN BUSCAR CONTIGUOS -->
+                    <button 
+                        id="btnBuscarContiguos"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 mb-4"
+                    >
+                        🔍 Buscar Contiguos
+                    </button>
+
+                    <!-- RESULTADO BÚSQUEDA -->
+                    <div class="p-4 bg-slate-700 rounded-lg">
+                        <p class="text-gray-300 text-xs mb-2">Resultado Búsqueda:</p>
+                        <p id="resultadoBusqueda" class="text-green-400 font-semibold text-sm">
+                            Esperando búsqueda...
+                        </p>
+                    </div>
+
+                    <!-- BOTÓN REINICIAR SALA -->
+                    <button 
+                        id="btnReiniciar"
+                        class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 mt-4"
+                    >
+                        🔄 Reiniciar Sala
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // ========================================
+        // CÓDIGO TYPESCRIPT CONVERTIDO A JAVASCRIPT
+        // ========================================
+
+        function inicializarSala() {
+            let sala = [];
+            for (var fila = 0; fila < 8; fila++) {
+                let nuevaFila = [];
+                for (var columna = 0; columna < 10; columna++) {
+                    nuevaFila.push(0);
+                }
+                sala.push(nuevaFila);
+            }
+            return sala;
+        }
+
+        function reservarAsiento(sala, fila, columna) {
+            if (fila < 0 || fila > 7 || columna < 0 || columna > 9) {
+                return "Esa posición no existe en la sala.";
+            }
+            if (sala[fila][columna] === 1) {
+                return "El asiento ya está ocupado.";
+            } else {
+                sala[fila][columna] = 1;
+                return "Asiento reservado correctamente.";
+            }
+        }
+
+        function contarAsientos(sala) {
+            var ocupados = 0;
+            var libres = 0;
+            for (var fila = 0; fila < 8; fila++) {
+                for (var columna = 0; columna < 10; columna++) {
+                    if (sala[fila][columna] === 1) {
+                        ocupados = ocupados + 1;
+                    } else {
+                        libres = libres + 1;
+                    }
+                }
+            }
+            return "Asientos ocupados: " + ocupados + " | Asientos disponibles: " + libres;
+        }
+
+        function buscarContiguos(sala) {
+            for (var fila = 0; fila < 8; fila++) {
+                for (var columna = 0; columna < 9; columna++) {
+                    if (sala[fila][columna] === 0 && sala[fila][columna + 1] === 0) {
+                        return "Hallado en la Fila " + fila + ": Asientos " + columna + " y " + (columna + 1);
+                    }
+                }
+            }
+            return "No hay dos asientos contiguos disponibles.";
+        }
+
+        // ========================================
+        // VARIABLES GLOBALES
+        // ========================================
+        let salaCine = inicializarSala();
+
+        // ========================================
+        // FUNCIONES DE INTERFAZ
+        // ========================================
+
+        function generarCuadricula() {
+            const headerCol = document.getElementById('headerCol');
+            const seatGrid = document.getElementById('seatGrid');
+            
+            // Limpiar
+            headerCol.innerHTML = '';
+            seatGrid.innerHTML = '';
+
+            // Generar encabezado de columnas
+            for (let col = 0; col < 10; col++) {
+                const colHeader = document.createElement('span');
+                colHeader.className = 'w-8 h-8 flex items-center justify-center text-gray-400 text-xs font-bold';
+                colHeader.textContent = col;
+                headerCol.appendChild(colHeader);
+            }
+
+            // Generar filas de asientos
+            for (let fila = 0; fila < 8; fila++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'flex gap-2 items-center';
+
+                // Número de fila
+                const filaLabel = document.createElement('div');
+                filaLabel.className = 'w-12 text-right text-gray-400 font-bold text-sm';
+                filaLabel.textContent = 'Fila ' + fila;
+                rowDiv.appendChild(filaLabel);
+
+                // Botones de asientos
+                for (let columna = 0; columna < 10; columna++) {
+                    const btn = document.createElement('button');
+                    btn.className = 'w-8 h-8 rounded font-bold text-xs transition duration-200';
+                    btn.setAttribute('data-fila', fila);
+                    btn.setAttribute('data-columna', columna);
+
+                    if (salaCine[fila][columna] === 0) {
+                        // ASIENTO DISPONIBLE
+                        btn.className += ' bg-green-500 hover:bg-green-600 text-white cursor-pointer';
+                        btn.textContent = 'L';
+                        btn.addEventListener('click', function() {
+                            reservarAsientoUI(fila, columna);
+                        });
+                    } else {
+                        // ASIENTO OCUPADO
+                        btn.className += ' bg-red-500 text-white cursor-not-allowed';
+                        btn.textContent = 'X';
+                        btn.disabled = true;
+                    }
+
+                    rowDiv.appendChild(btn);
+                }
+
+                seatGrid.appendChild(rowDiv);
+            }
+        }
+
+       function mostrarAlerta(mensaje, tipo = 'info') {
+            const alertPanel = document.getElementById('alertPanel');
+            const alertMessage = document.getElementById('alertMessage');
+            
+            alertMessage.textContent = mensaje;
+            alertPanel.classList.remove('hidden');
+            
+            // Base de clases fijas para que FLOTE y no mueva la pantalla
+            let clasesBase = 'fixed top-4 right-4 z-50 p-4 rounded-lg shadow-2xl max-w-sm bg-slate-700 border-l-4 ';
+
+            // Cambiar solo el color del borde según el tipo sin romper el diseño flotante
+            if (tipo === 'success') {
+                alertPanel.className = clasesBase + 'border-green-500';
+            } else if (tipo === 'error') {
+                alertPanel.className = clasesBase + 'border-red-500';
+            } else {
+                alertPanel.className = clasesBase + 'border-blue-500';
+            }
+
+            // Auto-ocultar después de 4 segundos
+            setTimeout(() => {
+                alertPanel.classList.add('hidden');
+            }, 4000);
+        }
+        function reservarAsientoUI(fila, columna) {
+            const resultado = reservarAsiento(salaCine, fila, columna);
+            
+            if (resultado === "Asiento reservado correctamente.") {
+                mostrarAlerta("✅ " + resultado, 'success');
+                // Actualizar el botón
+                const btn = document.querySelector(`[data-fila="${fila}"][data-columna="${columna}"]`);
+                btn.textContent = 'X';
+                btn.className = 'w-8 h-8 rounded font-bold text-xs transition duration-200 bg-red-500 text-white cursor-not-allowed';
+                btn.disabled = true;
+                btn.removeEventListener('click', function() {
+                    reservarAsientoUI(fila, columna);
+                });
+            } else {
+                mostrarAlerta("❌ " + resultado, 'error');
+            }
+
+            // Actualizar estadísticas
+            actualizarEstadisticas();
+        }
+
+        function actualizarEstadisticas() {
+            const estadisticas = document.getElementById('estadisticas');
+            estadisticas.textContent = contarAsientos(salaCine);
+        }
+
+        function buscarContiguosUI() {
+            const resultado = buscarContiguos(salaCine);
+            const resultadoDiv = document.getElementById('resultadoBusqueda');
+            
+            if (resultado.includes("No hay dos asientos contiguos")) {
+                resultadoDiv.className = 'text-orange-400 font-semibold text-sm';
+            } else {
+                resultadoDiv.className = 'text-green-400 font-semibold text-sm';
+            }
+            
+            resultadoDiv.textContent = resultado;
+            mostrarAlerta(resultado, 'info');
+        }
+
+        function reiniciarSala() {
+            salaCine = inicializarSala();
+            generarCuadricula();
+            actualizarEstadisticas();
+            document.getElementById('resultadoBusqueda').textContent = 'Esperando búsqueda...';
+            mostrarAlerta("🔄 Sala reiniciada completamente", 'success');
+        }
+
+        // ========================================
+        // EVENT LISTENERS
+        // ========================================
+
+        document.getElementById('btnBuscarContiguos').addEventListener('click', buscarContiguosUI);
+        document.getElementById('btnReiniciar').addEventListener('click', reiniciarSala);
+
+        // ========================================
+        // INICIALIZACIÓN
+        // ========================================
+
+        generarCuadricula();
+        actualizarEstadisticas();
+    </script>
+</body>
+</html>
